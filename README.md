@@ -47,7 +47,7 @@ Building resilient systems requires robust error handling. **Smart Retry** takes
 ## 📥 Installation
 
 ```bash
-pip install smart-retry
+pip install python-smart-retry==0.1.0
 ```
 
 For development:
@@ -156,14 +156,14 @@ result = await engine.run_async(my_async_func)
 
 ### `retry` Decorator
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `max_attempts` | `int` | `3` | Maximum number of attempts. |
-| `exceptions` | `tuple` | `(Exception,)` | Exception types to catch. |
-| `backoff` | `callable` | `exponential_backoff` | Delay strategy function. |
-| `on_retry` | `callable` | `None` | `callback(error, attempt)` |
-| `on_success` | `callable` | `None` | `callback(result)` |
-| `on_fail` | `callable` | `None` | `callback(error)` |
+| Parameter      | Type       | Default               | Description                 |
+| -------------- | ---------- | --------------------- | --------------------------- |
+| `max_attempts` | `int`      | `3`                   | Maximum number of attempts. |
+| `exceptions`   | `tuple`    | `(Exception,)`        | Exception types to catch.   |
+| `backoff`      | `callable` | `exponential_backoff` | Delay strategy function.    |
+| `on_retry`     | `callable` | `None`                | `callback(error, attempt)`  |
+| `on_success`   | `callable` | `None`                | `callback(result)`          |
+| `on_fail`      | `callable` | `None`                | `callback(error)`           |
 
 ---
 
