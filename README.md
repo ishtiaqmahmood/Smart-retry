@@ -1,7 +1,7 @@
 # 🚀 Smart Retry
 
 [![PyPI version](https://img.shields.io/pypi/v/smart-retry.svg)](https://pypi.org/project/smart-retry/)
-[![Python versions](https://img.shields.io/pypi/pyversions/smart-retry.svg)](https://pypi.org/project/smart-retry/)
+[![Python versions](https://img.shields.io/pypi/pyversions/smart-retry.svg)](https://pypi.org/project/python-smart-retry/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, production-ready retry library for Python. **Smart Retry** simplifies error handling with a clean, decorator-based API supporting both synchronous and asynchronous execution.
