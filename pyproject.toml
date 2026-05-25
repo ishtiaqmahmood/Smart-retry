@@ -1,17 +1,67 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "smart-retry"
 version = "0.1.0"
 description = "A universal smart retry library for Python (sync + async)"
-authors = [{ name = "Ishtiaq Mahmood" }]
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 
-dependencies = []
+authors = [
+    { name = "Ishtiaq Mahmood" }
+]
+
+keywords = [
+    "retry",
+    "async",
+    "asyncio",
+    "resilience",
+    "fault-tolerance",
+    "decorator",
+    "python"
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities"
+]
+
+dependencies = [
+    "colorama>=0.4.6"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "build>=1.2.1",
+    "twine>=5.0.0"
+]
 
 [project.urls]
-Homepage = "https://github.com/ishtiaqmahmood/smart-retry"
+Homepage = "https://github.com/ishtiaqmahmood/Smart-retry"
+Repository = "https://github.com/ishtiaqmahmood/Smart-retry"
+Issues = "https://github.com/ishtiaqmahmood/Smart-retry/issues"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["smart_retry*"]

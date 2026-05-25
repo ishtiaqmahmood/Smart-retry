@@ -1,48 +1,86 @@
-# decorator + wrapper API
+# smart_retry/retry.py
 
+import asyncio
 import functools
-from typing import Any, Callable, Optional, Tuple, Type, Union
-
-from .core import RetryEngine
-from .utils import is_async_callable
+import time
+from .exceptions import RetryError
 
 
 def retry(
-    max_attempts: int = 3,
-    exceptions: Union[Type[Exception], Tuple[Type[Exception], ...]] = (Exception,),
-    backoff: Callable[[int], float] = None,
-    on_retry: Optional[Callable[[Exception, int], None]] = None,
-    on_success: Optional[Callable[[Any], None]] = None,
-    on_fail: Optional[Callable[[Exception], None]] = None,
+    max_attempts=3,
+    exceptions=(Exception,),
+    backoff=lambda x: 1,
+    on_retry=None,
+    on_success=None,
+    on_fail=None,
 ):
-    """
-    Decorator to retry a function or coroutine.
-    """
-    # Initialize engine with provided arguments
-    kwargs = {
-        "max_attempts": max_attempts,
-        "exceptions": exceptions,
-        "on_retry": on_retry,
-        "on_success": on_success,
-        "on_fail": on_fail,
-    }
-    if backoff:
-        kwargs["backoff"] = backoff
+    def decorator(func):
 
-    engine = RetryEngine(**kwargs)
-
-    def decorator(func: Callable):
-        if is_async_callable(func):
+        # -------------------------
+        # ASYNC WRAPPER
+        # -------------------------
+        if asyncio.iscoroutinefunction(func):
 
             @functools.wraps(func)
-            async def wrapper(*args, **kwargs2):
-                return await engine.run_async(func, *args, **kwargs2)
+            async def wrapper(*args, **kwargs):
+                last_error = None
+
+                for attempt in range(1, max_attempts + 1):
+                    try:
+                        result = await func(*args, **kwargs)
+
+                        if on_success:
+                            on_success(result)
+
+                        return result
+
+                    # IMPORTANT FIX: only catch allowed exceptions
+                    except exceptions as e:
+                        last_error = e
+
+                        if attempt < max_attempts and on_retry:
+                            on_retry(e, attempt)
+
+                        if attempt < max_attempts:
+                            await asyncio.sleep(backoff(attempt))
+
+                if on_fail:
+                    on_fail(last_error)
+
+                raise RetryError(max_attempts, last_error)
 
             return wrapper
 
+        # -------------------------
+        # SYNC WRAPPER
+        # -------------------------
         @functools.wraps(func)
-        def wrapper(*args, **kwargs2):
-            return engine.run_sync(func, *args, **kwargs2)
+        def wrapper(*args, **kwargs):
+            last_error = None
+
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    result = func(*args, **kwargs)
+
+                    if on_success:
+                        on_success(result)
+
+                    return result
+
+                # IMPORTANT FIX: only catch allowed exceptions
+                except exceptions as e:
+                    last_error = e
+
+                    if attempt < max_attempts and on_retry:
+                        on_retry(e, attempt)
+
+                    if attempt < max_attempts:
+                        time.sleep(backoff(attempt))
+
+            if on_fail:
+                on_fail(last_error)
+
+            raise RetryError(max_attempts, last_error)
 
         return wrapper
 
